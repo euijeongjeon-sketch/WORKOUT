@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#F2F2F0">
+<title>Workout Planner 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#F2F2F0}
+body{font-family:'Inter',sans-serif;color:#1a1a1a;max-width:480px;margin:0 auto;min-height:100vh}
+.wrap{padding:2.5rem 1.5rem 4rem}
+.top-bar{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:2.25rem}
+.brand{font-family:'Playfair Display',serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#aaa}
+.top-right{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:6px}
+.icon-btn{background:none;border:.5px solid #ccc;border-radius:50%;width:28px;height:28px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;cursor:pointer;font-size:11px;color:#aaa;font-family:'Inter',sans-serif;padding:0;line-height:1;outline:none;-webkit-appearance:none}
+.icon-btn:active{border-color:#666;color:#444}
+.icon-btn:disabled{opacity:.25}
+.week-title{font-family:'Playfair Display',serif;font-size:3rem;font-weight:400;line-height:1;letter-spacing:-.02em;color:#1a1a1a;margin-bottom:.25rem}
+.phase-line{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#bbb;margin-bottom:.3rem}
+.date-range{font-size:12px;color:#bbb;margin-bottom:1.75rem;font-weight:300}
+.divider{height:.5px;background:#ddd;margin-bottom:1.25rem}
+.summary-row{display:-webkit-flex;display:flex;margin-bottom:1.25rem}
+.sum-item{flex:1;-webkit-flex:1;text-align:center}
+.sum-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:#1a1a1a}
+.sum-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#bbb;margin-top:2px}
+.prog-track{height:.5px;background:#ddd;margin-bottom:1.75rem;position:relative}
+.prog-fill{height:.5px;background:#1a1a1a;-webkit-transition:width .5s ease;transition:width .5s ease;position:absolute;top:0;left:0}
+.day-row{border-top:.5px solid #ddd;padding:1rem 0;display:-webkit-flex;display:flex;-webkit-align-items:flex-start;align-items:flex-start;gap:1rem}
+.day-row:last-child{border-bottom:.5px solid #ddd}
+.day-row.has-ex{cursor:pointer}
+.day-row.holiday-row{opacity:.4}
+.day-left{min-width:38px}
+.dow-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#bbb;margin-bottom:3px}
+.date-label{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:400;line-height:1;color:#1a1a1a}
+.day-mid{-webkit-flex:1;flex:1}
+.type-label{font-size:13px;font-weight:500;letter-spacing:.03em;margin-bottom:3px;line-height:1.3}
+.sub-label{font-size:10px;color:#bbb;font-weight:300}
+.day-right{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:8px;padding-top:2px}
+.toggle-arr{font-size:10px;color:#ccc;line-height:1;width:12px;text-align:center;-webkit-transition:-webkit-transform .2s;transition:transform .2s}
+.toggle-arr.open{-webkit-transform:rotate(180deg);transform:rotate(180deg)}
+.check-btn{width:28px;height:28px;border-radius:50%;border:.5px solid #ccc;background:#F2F2F0;cursor:pointer;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;flex-shrink:0;-webkit-flex-shrink:0;-webkit-transition:border-color .2s,background .2s;transition:border-color .2s,background .2s;outline:none;-webkit-appearance:none;padding:0}
+.check-btn:active{border-color:#888}
+.check-btn.checked{border-color:#1a1a1a;background:#1a1a1a}
+.dumbbell-icon{width:14px;height:14px;display:none;-webkit-animation:popIn .22s cubic-bezier(.34,1.56,.64,1) forwards;animation:popIn .22s cubic-bezier(.34,1.56,.64,1) forwards}
+.check-btn.checked .dumbbell-icon{display:block}
+@-webkit-keyframes popIn{0%{-webkit-transform:scale(0) rotate(-15deg);opacity:0}100%{-webkit-transform:scale(1) rotate(0);opacity:1}}
+@keyframes popIn{0%{transform:scale(0) rotate(-15deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.done-mark{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#bbb}
+.ex-panel{display:none;padding:.65rem 0 .25rem 54px}
+.ex-panel.open{display:block}
+.ex-item{display:-webkit-flex;display:flex;padding:6px 0;border-bottom:.5px solid #e8e8e6;font-size:12px;-webkit-align-items:center;align-items:center;color:#1a1a1a;gap:8px}
+.ex-item:last-child{border-bottom:none}
+.ex-name{-webkit-flex:1;flex:1}
+.ex-set{font-size:10px;color:#aaa;white-space:nowrap;font-weight:300}
+.ex-tool{font-size:9px;color:#ccc;white-space:nowrap}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#F2F2F0;z-index:200;overflow-y:scroll;-webkit-overflow-scrolling:touch}
+.modal-overlay.open{display:block}
+.modal-inner{padding:2.5rem 1.5rem 4rem;max-width:480px;margin:0 auto}
+.modal-top{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:2rem}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:400;color:#1a1a1a}
+.phase-note{font-size:10px;color:#bbb;font-style:italic;margin-bottom:1.5rem;line-height:1.8}
+.routine-block{margin-bottom:1.75rem}
+.routine-head{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#aaa;margin-bottom:.8rem;padding-bottom:.5rem;border-bottom:.5px solid #ddd}
+.routine-row{display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:.5px solid #eee;font-size:12px;-webkit-align-items:center;align-items:center;color:#1a1a1a}
+.routine-row:last-child{border-bottom:none}
+.routine-set{font-size:11px;color:#aaa;font-weight:300;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="main-wrap">
+  <div class="top-bar">
+    <div class="brand">Workout Planner 2026</div>
+    <div class="top-right">
+      <button class="icon-btn" id="guide-btn">?</button>
+      <button class="icon-btn" id="prev-btn">←</button>
+      <button class="icon-btn" id="next-btn">→</button>
+    </div>
+  </div>
+  <div class="week-title" id="week-title">W0</div>
+  <div class="phase-line" id="phase-line"></div>
+  <div class="date-range" id="date-range"></div>
+  <div class="divider"></div>
+  <div class="summary-row">
+    <div class="sum-item"><div class="sum-num" id="sum-done">0</div><div class="sum-lbl">완료</div></div>
+    <div class="sum-item"><div class="sum-num" id="sum-total">0</div><div class="sum-lbl">전체</div></div>
+    <div class="sum-item"><div class="sum-num" id="sum-pct">—</div><div class="sum-lbl">달성률</div></div>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div id="days-container"></div>
+</div>
+
+<div class="modal-overlay" id="guide-modal">
+  <div class="modal-inner">
+    <div class="modal-top">
+      <div class="modal-title">루틴 가이드</div>
+      <button class="icon-btn" id="close-btn">✕</button>
+    </div>
+    <div class="phase-note">Phase 1 (W0–W2) · 4×10–12<br>Phase 2 (W3–W4) · 4×8–10<br>Phase 3 (W5–W7) · 4×6</div>
+    <div class="routine-block">
+      <div class="routine-head">Push A — 화요일 고정</div>
+      <div class="routine-row"><span>바벨 벤치프레스</span><span class="routine-set">4×10–12 → 4×6</span></div>
+      <div class="routine-row"><span>펙덱 플라이</span><span class="routine-set">3×12–15 → 4×12</span></div>
+      <div class="routine-row"><span>케이블 크로스오버</span><span class="routine-set">3×15 (1–4주)</span></div>
+      <div class="routine-row"><span>덤벨 숄더프레스</span><span class="routine-set">4×10 → 4×8</span></div>
+      <div class="routine-row"><span>사이드 레터럴 레이즈</span><span class="routine-set">3×15</span></div>
+      <div class="routine-row"><span>케이블 트라이셉스 푸시다운</span><span class="routine-set">3×12 → 4×12</span></div>
+      <div class="routine-row"><span>케이블 오버헤드 익스텐션 (1–2주)</span><span class="routine-set">3×12</span></div>
+    </div>
+    <div class="routine-block">
+      <div class="routine-head">Push B — 목요일 고정</div>
+      <div class="routine-row"><span>덤벨 인클라인 프레스</span><span class="routine-set">4×10–12 → 4×8</span></div>
+      <div class="routine-row"><span>딥스</span><span class="routine-set">3×10 → 4×8</span></div>
+      <div class="routine-row"><span>숄더 프레스 머신</span><span class="routine-set">4×10 → 4×8</span></div>
+      <div class="routine-row"><span>케이블 업라이트 로우</span><span class="routine-set">3×12</span></div>
+      <div class="routine-row"><span>EZ바 스컬크러셔</span><span class="routine-set">3×10 → 4×8</span></div>
+      <div class="routine-row"><span>케이블 푸시다운 (1–2주)</span><span class="routine-set">3×12</span></div>
+    </div>
+    <div class="routine-block">
+      <div class="routine-head">Pull A — 수요일 고정</div>
+      <div class="routine-row"><span>티바 로우</span><span class="routine-set">4×10 → 4×6</span></div>
+      <div class="routine-row"><span>랫풀다운</span><span class="routine-set">4×10 → 4×8</span></div>
+      <div class="routine-row"><span>시티드 케이블 로우</span><span class="routine-set">3×12 → 4×12</span></div>
+      <div class="routine-row"><span>케이블 페이스 풀</span><span class="routine-set">3×15</span></div>
+      <div class="routine-row"><span>EZ바 바벨 컬</span><span class="routine-set">3×10 → 4×8</span></div>
+      <div class="routine-row"><span>케이블 컬 (1–4주)</span><span class="routine-set">3×12</span></div>
+      <div class="routine-row"><span>풀업 (5주~, 랫풀 대체 가)</span><span class="routine-set">4×6–8</span></div>
+    </div>
+    <div class="routine-block">
+      <div class="routine-head">Pull B + Legs B — 월요일 선택</div>
+      <div class="routine-row"><span>원암 덤벨 로우</span><span class="routine-set">4×10 → 4×8</span></div>
+      <div class="routine-row"><span>시티드 케이블 로우</span><span class="routine-set">3×12 → 4×10</span></div>
+      <div class="routine-row"><span>덤벨 인클라인 컬</span><span class="routine-set">3×12 → 4×10</span></div>
+      <div class="routine-row"><span>레그프레스</span><span class="routine-set">4×12 → 4×10</span></div>
+      <div class="routine-row"><span>레그 컬 머신</span><span class="routine-set">3×12 → 4×10</span></div>
+      <div class="routine-row"><span>레그 익스텐션 (1–4주)</span><span class="routine-set">3×15</span></div>
+      <div class="routine-row"><span>스미스 카프레이즈 (1–4주)</span><span class="routine-set">3×15</span></div>
+    </div>
+    <div class="routine-block">
+      <div class="routine-head">Legs A — 금요일 선택</div>
+      <div class="routine-row"><span>바벨 스쿼트</span><span class="routine-set">4×10 → 5×5</span></div>
+      <div class="routine-row"><span>루마니안 데드리프트</span><span class="routine-set">3×10 → 4×8</span></div>
+      <div class="routine-row"><span>레그 컬 머신</span><span class="routine-set">3×12 → 3×10</span></div>
+      <div class="routine-row"><span>스미스 카프레이즈</span><span class="routine-set">4×15</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var DB='<svg class="dumbbell-icon" viewBox="0 0 13 13" fill="none"><rect x="1" y="5.2" width="2" height="2.6" rx=".5" fill="#fff"/><rect x="2.5" y="4.5" width="1.5" height="4" rx=".4" fill="#fff"/><line x1="4" y1="6.5" x2="9" y2="6.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><rect x="9" y="4.5" width="1.5" height="4" rx=".4" fill="#fff"/><rect x="10" y="5.2" width="2" height="2.6" rx=".5" fill="#fff"/></svg>';
+
+var PA1=[['바벨 벤치프레스','4×10–12','바벨+랙'],['펙덱 플라이','3×12–15','펙덱'],['케이블 크로스오버','3×15','케이블'],['덤벨 숄더프레스','4×10','덤벨'],['사이드 레터럴','3×15','덤벨'],['케이블 푸시다운','3×12','케이블'],['오버헤드 익스텐션','3×12','케이블']];
+var PB1=[['덤벨 인클라인 프레스','4×10–12','덤벨'],['딥스','3×10','딥스바'],['숄더 프레스 머신','4×10','숄더 머신'],['케이블 업라이트 로우','3×12','케이블'],['EZ바 스컬크러셔','3×10','EZ바'],['케이블 푸시다운','3×12','케이블']];
+var PUA1=[['티바 로우','4×10','티바 로우'],['랫풀다운','4×10','케이블'],['시티드 케이블 로우','3×12','로우 머신'],['케이블 페이스 풀','3×15','케이블'],['EZ바 컬','3×10','EZ바'],['케이블 컬','3×12','케이블']];
+var LA1=[['바벨 스쿼트','4×10','바벨+랙'],['루마니안 데드리프트','3×10','바벨'],['레그 컬 머신','3×12','렉 컬'],['스미스 카프레이즈','4×15','스미스']];
+var PLB1=[['원암 덤벨 로우','4×10','덤벨'],['시티드 케이블 로우','3×12','로우 머신'],['덤벨 인클라인 컬','3×12','덤벨'],['레그프레스','4×12','레그프레스'],['레그 컬 머신','3×12','렉 컬'],['레그 익스텐션','3×15','렉 익스텐션'],['스미스 카프레이즈','3×15','스미스']];
+var PA3=[['바벨 벤치프레스','4×8–10','바벨+랙'],['펙덱 플라이','4×12','펙덱'],['케이블 크로스오버','3×15','케이블'],['덤벨 숄더프레스','4×10','덤벨'],['사이드 레터럴','3×15','덤벨'],['케이블 푸시다운','4×12','케이블']];
+var PB3=[['덤벨 인클라인 프레스','4×8–10','덤벨'],['딥스','4×8','딥스바'],['숄더 프레스 머신','4×8–10','숄더 머신'],['케이블 업라이트 로우','3×12','케이블'],['EZ바 스컬크러셔','3×10','EZ바']];
+var PUA3=[['티바 로우','4×8–10','티바 로우'],['랫풀다운','4×10','케이블'],['시티드 케이블 로우','4×12','로우 머신'],['케이블 페이스 풀','3×15','케이블'],['EZ바 컬','3×10','EZ바'],['케이블 컬','3×12','케이블']];
+var LA3=[['바벨 스쿼트','4×8','바벨+랙'],['루마니안 데드리프트','3×10','바벨'],['레그 컬 머신','3×12','렉 컬'],['스미스 카프레이즈','4×15','스미스']];
+var PLB3=[['원암 덤벨 로우','4×10','덤벨'],['시티드 케이블 로우','4×12','로우 머신'],['덤벨 인클라인 컬','3×12','덤벨'],['레그프레스','4×10–12','레그프레스'],['레그 컬 머신','3×12','렉 컬'],['레그 익스텐션','3×15','렉 익스텐션']];
+var PA5=[['바벨 벤치프레스','4×6','바벨+랙'],['펙덱 플라이','4×12','펙덱'],['덤벨 숄더프레스','4×8','덤벨'],['사이드 레터럴','3×15','덤벨'],['케이블 푸시다운','4×12','케이블']];
+var PB5=[['덤벨 인클라인 프레스','4×8','덤벨'],['딥스','4×8','딥스바'],['숄더 프레스 머신','4×8','숄더 머신'],['케이블 업라이트 로우','3×12','케이블'],['EZ바 스컬크러셔','4×8','EZ바']];
+var PUA5=[['티바 로우','4×6','티바 로우'],['랫풀다운','4×8–10','케이블'],['풀업 (or 랫풀다운)','4×6–8','풀업바'],['케이블 페이스 풀','3×15','케이블'],['EZ바 컬','4×8','EZ바']];
+var LA5=[['바벨 스쿼트','5×5','바벨+랙'],['루마니안 데드리프트','4×8','바벨'],['레그 컬 머신','3×10','렉 컬'],['스미스 카프레이즈','4×15','스미스']];
+var PLB5=[['원암 덤벨 로우','4×8','덤벨'],['시티드 케이블 로우','4×10','로우 머신'],['덤벨 인클라인 컬','4×10','덤벨'],['레그프레스','4×10','레그프레스'],['레그 컬 머신','4×10','렉 컬']];
+
+function H(dow,date,label,sub){return {dow:dow,date:date,type:'holiday',label:label,sub:sub,color:'#c44',ex:[]};}
+function REST(dow,date,sub){return {dow:dow,date:date,type:'rest',label:'휴식',sub:sub||'',color:'#ccc',ex:[]};}
+
+var WEEKS=[
+  {label:'W0',dates:'5/7 – 5/11',phase:'Phase 1',sets:'4×10–12',days:[
+    {dow:'수',date:'7',type:'pull-a',label:'Pull A',sub:'고정',color:'#555',ex:PUA1},
+    {dow:'목',date:'8',type:'push-b',label:'Push B',sub:'고정',color:'#555',ex:PB1},
+    {dow:'금',date:'9',type:'opt',label:'Legs A',sub:'선택',color:'#888',ex:LA1},
+    REST('토','10'),REST('일','11')
+  ]},
+  {label:'W1',dates:'5/12 – 5/18',phase:'Phase 1',sets:'4×10–12',days:[
+    {dow:'월',date:'12',type:'opt',label:'Pull B + Legs B',sub:'선택',color:'#888',ex:PLB1},
+    {dow:'화',date:'13',type:'push-a',label:'Push A',sub:'고정',color:'#555',ex:PA1},
+    {dow:'수',date:'14',type:'pull-a',label:'Pull A',sub:'고정',color:'#555',ex:PUA1},
+    {dow:'목',date:'15',type:'push-b',label:'Push B',sub:'고정',color:'#555',ex:PB1},
+    {dow:'금',date:'16',type:'opt',label:'Legs A',sub:'선택',color:'#888',ex:LA1},
+    REST('토','17'),REST('일','18')
+  ]},
+  {label:'W2',dates:'5/19 – 5/25',phase:'Phase 1',sets:'4×10–12',days:[
+    {dow:'월',date:'19',type:'opt',label:'Pull B + Legs B',sub:'선택',color:'#888',ex:PLB1},
+    {dow:'화',date:'20',type:'push-a',label:'Push A',sub:'고정',color:'#555',ex:PA1},
+    {dow:'수',date:'21',type:'pull-a',label:'Pull A',sub:'고정',color:'#555',ex:PUA1},
+    {dow:'목',date:'22',type:'push-b',label:'Push B',sub:'고정',color:'#555',ex:PB1},
+    {dow:'금',date:'23',type:'opt',label:'Legs A',sub:'선택',color:'#888',ex:LA1},
+    REST('토','24'),REST('일','25')
+  ]},
+  {label:'W3',dates:'5/26 – 6/1',phase:'Phase 2',sets:'4×8–10',days:[
+    {dow:'월',date:'26',type:'opt',label:'Pull B + Legs B',sub:'선택',color:'#888',ex:PLB3},
+    {dow:'화',date:'27',type:'push-a',label:'Push A',sub:'고정',color:'#555',ex:PA3},
+    {dow:'수',date:'28',type:'pull-a',label:'Pull A',sub:'고정',color:'#555',ex:PUA3},
+    {dow:'목',date:'29',type:'push-b',label:'Push B',sub:'고정',color:'#555',ex:PB3},
+    {dow:'금',date:'30',type:'opt',label:'Legs A',sub:'선택',color:'#888',ex:LA3},
+    REST('토','31'),REST('일','6/1')
+  ]},
+  {label:'W4',dates:'6/2 – 6/8',phase:'Phase 2',sets:'4×8–10',days:[
+    {dow:'월',date:'6/2',type:'opt',label:'Pull B + Legs B',sub:'선택',color:'#888',ex:PLB3},
+    H('화','6/3','지방선거일','공휴일 — Push A 결번'),
+    {dow:'수',date:'6/4',type:'pull-a',label:'Pull A',sub:'고정',color:'#555',ex:PUA3},
+    {dow:'목',date:'6/5',type:'push-b',label:'Push B',sub:'고정',color:'#555',ex:PB3},
+    H('금','6/6','현충일','공휴일 — 휴무'),
+    REST('토','6/7'),REST('일','6/8')
+  ]},
+  {label:'W5',dates:'6/9 – 6/15',phase:'Phase 3',sets:'4×6–8',days:[
+    {dow:'월',date:'6/9',type:'opt',label:'Pull B + Legs B',sub:'선택',color:'#888',ex:PLB5},
+    {dow:'화',date:'6/10',type:'push-a',label:'Push A',sub:'고정',color:'#555',ex:PA5},
+    {dow:'수',date:'6/11',type:'pull-a',label:'Pull A',sub:'고정',color:'#555',ex:PUA5},
+    {dow:'목',date:'6/12',type:'push-b',label:'Push B',sub:'고정',color:'#555',ex:PB5},
+    {dow:'금',date:'6/13',type:'opt',label:'Legs A',sub:'선택',color:'#888',ex:LA5},
+    REST('토','6/14'),REST('일','6/15')
+  ]},
+  {label:'W6',dates:'6/16 – 6/22',phase:'Phase 3 피크',sets:'4×6',days:[
+    {dow:'월',date:'6/16',type:'opt',label:'Pull B + Legs B',sub:'선택',color:'#888',ex:PLB5},
+    {dow:'화',date:'6/17',type:'push-a',label:'Push A',sub:'고정',color:'#555',ex:PA5},
+    {dow:'수',date:'6/18',type:'pull-a',label:'Pull A',sub:'고정',color:'#555',ex:PUA5},
+    {dow:'목',date:'6/19',type:'push-b',label:'Push B',sub:'고정',color:'#555',ex:PB5},
+    {dow:'금',date:'6/20',type:'opt',label:'Legs A',sub:'선택 · 마지막 운동일',color:'#888',ex:LA5},
+    REST('토','6/21'),REST('일','6/22','디로드 시작')
+  ]},
+  {label:'W7',dates:'6/23 – 6/30',phase:'디로드',sets:'중량 -10% · 세트 -1',days:[
+    REST('월','6/23','완전 회복'),REST('화','6/24'),REST('수','6/25'),
+    REST('목','6/26'),REST('금','6/27'),REST('토','6/28'),REST('일','6/29')
+  ]}
+];
+
+var cur=0, checks={}, openPanel=null;
+var STORAGE_KEY='workout_planner_2026';
+
+function loadChecks(){
+  try{var s=localStorage.getItem(STORAGE_KEY);if(s)checks=JSON.parse(s);}catch(e){checks={};}
+}
+function saveChecks(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(checks));}catch(e){}
+}
+function key(w,d){return 'w'+w+'_d'+d;}
+
+function render(){
+  var w=WEEKS[cur];
+  document.getElementById('week-title').textContent=w.label;
+  document.getElementById('phase-line').textContent=w.phase+' · '+w.sets;
+  document.getElementById('date-range').textContent=w.dates;
+  document.getElementById('prev-btn').disabled=(cur===0);
+  document.getElementById('next-btn').disabled=(cur===WEEKS.length-1);
+
+  var wDays=[];
+  for(var i=0;i<w.days.length;i++){if(w.days[i].type!=='rest'&&w.days[i].type!=='holiday')wDays.push(w.days[i]);}
+  var total=wDays.length, done=0;
+  for(var i=0;i<wDays.length;i++){if(checks[key(cur,w.days.indexOf(wDays[i]))])done++;}
+  document.getElementById('sum-done').textContent=done;
+  document.getElementById('sum-total').textContent=total;
+  document.getElementById('sum-pct').textContent=total?Math.round(done/total*100)+'%':'—';
+  document.getElementById('prog-fill').style.width=total?(done/total*100)+'%':'0%';
+
+  var cont=document.getElementById('days-container');
+  cont.innerHTML='';
+  openPanel=null;
+
+  for(var di=0;di<w.days.length;di++){
+    (function(day,di){
+      var k=key(cur,di), isDone=!!checks[k];
+      var isW=(day.type!=='rest'&&day.type!=='holiday');
+      var isH=(day.type==='holiday');
+      var hasEx=(day.ex&&day.ex.length>0);
+
+      var row=document.createElement('div');
+      var cls='day-row';
+      if(isH)cls+=' holiday-row';
+      else if(!isW)cls+=' rest-row';
+      else if(hasEx)cls+=' has-ex';
+      row.className=cls;
+
+      var left=document.createElement('div');left.className='day-left';
+      left.innerHTML='<div class="dow-label">'+day.dow+'</div><div class="date-label" style="color:'+(isH?'#c44':'#1a1a1a')+'">'+day.date+'</div>';
+
+      var mid=document.createElement('div');mid.className='day-mid';
+      mid.innerHTML='<div class="type-label" style="color:'+day.color+'">'+day.label+'</div>'+(day.sub?'<div class="sub-label">'+day.sub+'</div>':'');
+
+      var right=document.createElement('div');right.className='day-right';
+
+      if(isW){
+        if(isDone){var dm=document.createElement('span');dm.className='done-mark';dm.textContent='완료';right.appendChild(dm);}
+        if(hasEx){var arr=document.createElement('span');arr.className='toggle-arr';arr.id='arr-'+di;arr.textContent='↓';right.appendChild(arr);}
+        var cb=document.createElement('button');
+        cb.className='check-btn'+(isDone?' checked':'');
+        cb.innerHTML=DB;
+        cb.addEventListener('touchend',function(e){
+          e.preventDefault();e.stopPropagation();
+          checks[k]=!checks[k];saveChecks();render();
+        });
+        cb.addEventListener('click',function(e){
+          e.stopPropagation();
+          checks[k]=!checks[k];saveChecks();render();
+        });
+        right.appendChild(cb);
+      }
+
+      row.appendChild(left);row.appendChild(mid);row.appendChild(right);
+      cont.appendChild(row);
+
+      if(isW&&hasEx){
+        var panel=document.createElement('div');panel.className='ex-panel';panel.id='panel-'+di;
+        for(var ei=0;ei<day.ex.length;ei++){
+          var item=document.createElement('div');item.className='ex-item';
+          item.innerHTML='<span class="ex-name">'+day.ex[ei][0]+'</span><span class="ex-set">'+day.ex[ei][1]+'</span><span class="ex-tool">'+day.ex[ei][2]+'</span>';
+          panel.appendChild(item);
+        }
+        cont.appendChild(panel);
+
+        row.addEventListener('touchend',function(panel,di){return function(e){
+          if(e.target.closest&&e.target.closest('.check-btn'))return;
+          e.preventDefault();
+          togglePanel(panel,di);
+        };}(panel,di));
+        row.addEventListener('click',function(panel,di){return function(e){
+          if(e.target.closest&&e.target.closest('.check-btn'))return;
+          togglePanel(panel,di);
+        };}(panel,di));
+      }
+    })(w.days[di],di);
+  }
+}
+
+function togglePanel(panel,di){
+  var isOpen=panel.classList.contains('open');
+  if(openPanel&&openPanel!==panel){
+    openPanel.classList.remove('open');
+    var pid=openPanel.id.split('-')[1];
+    var pa=document.getElementById('arr-'+pid);
+    if(pa){pa.textContent='↓';pa.classList.remove('open');}
+  }
+  panel.classList.toggle('open',!isOpen);
+  var arr=document.getElementById('arr-'+di);
+  if(arr){arr.textContent=!isOpen?'↑':'↓';arr.classList.toggle('open',!isOpen);}
+  openPanel=!isOpen?panel:null;
+}
+
+document.getElementById('guide-btn').addEventListener('click',function(){document.getElementById('guide-modal').classList.add('open');});
+document.getElementById('close-btn').addEventListener('click',function(){document.getElementById('guide-modal').classList.remove('open');});
+document.getElementById('prev-btn').addEventListener('click',function(){if(cur>0){cur--;render();}});
+document.getElementById('next-btn').addEventListener('click',function(){if(cur<WEEKS.length-1){cur++;render();}});
+
+loadChecks();
+var t=new Date(),m=t.getMonth()+1,d=t.getDate();
+var ranges=[[5,1,5,11],[5,12,5,18],[5,19,5,25],[5,26,6,1],[6,2,6,8],[6,9,6,15],[6,16,6,22],[6,23,6,30]];
+for(var i=0;i<ranges.length;i++){
+  var r=ranges[i];
+  if((m>r[0]||(m===r[0]&&d>=r[1]))&&(m<r[2]||(m===r[2]&&d<=r[3]))){cur=i;break;}
+}
+render();
+</script>
+</body>
+</html>
